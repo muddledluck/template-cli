@@ -39,7 +39,7 @@ function createProject(projectPath) {
   fs.mkdirSync(projectPath)
   return true
 }
-const SKIP_FILES = ['node_modules', '.template.json', 'target'];
+const SKIP_FILES = ['node_modules', '.template.json', 'target', ".env"];
 
 function createDirectoryContents(templatePath, projectName) {
   const filesToCreate = fs.readdirSync(templatePath);

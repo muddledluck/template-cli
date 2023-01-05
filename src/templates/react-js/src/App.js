@@ -1,23 +1,60 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import {
+  AUTHENTICATED_ROUTE,
+  PUBLIC_ROUTE,
+  UNAUTHENTICATED_ROUTE,
+} from "./utils/constants/routes";
+import {
+  AuthenticatedRoute,
+  PublicRoute,
+  UnauthenticatedRoute,
+} from "./utils/routes";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        {PUBLIC_ROUTE.map((route) => {
+          return (
+            <Route
+              path={route.path}
+              element={
+                <PublicRoute>
+                  <route.element />
+                </PublicRoute>
+              }
+              key={route.id}
+            />
+          );
+        })}
+        {AUTHENTICATED_ROUTE.map((route) => {
+          return (
+            <Route
+              path={route.path}
+              element={
+                <AuthenticatedRoute redirectURL="/unauthenticated">
+                  <route.element />
+                </AuthenticatedRoute>
+              }
+              key={route.id}
+            />
+          );
+        })}
+        {UNAUTHENTICATED_ROUTE.map((route) => {
+          return (
+            <Route
+              path={route.path}
+              element={
+                <UnauthenticatedRoute redirectURL="/authenticated">
+                  <route.element />
+                </UnauthenticatedRoute>
+              }
+              key={route.id}
+            />
+          );
+        })}
+      </Routes>
     </div>
   );
 }

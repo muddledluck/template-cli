@@ -1,23 +1,27 @@
 import axios from "axios";
-import { tokens } from "../utils/jwtTokenStorage";
+import QueryString from "qs";
 import { SERVER_URL } from "../utils/serverUrl";
+import { localStorage } from "../utils/localStorage";
 
-const axiosInstance = axios.create({
-  baseURL: SERVER_URL,
+
+export const axiosInstance = axios.create({
+  baseURL: `${SERVER_URL}/api`,
   headers: {
     "Content-Type": "application/json",
   },
+  paramsSerializer: (params) =>
+    QueryString.stringify(params, { arrayFormat: "brackets" }),
 });
 
-// @response interceptor
-axiosInstance.interceptors.response.use((response) => {
-  // do something...
+axiosInstance.interceptors.response.use(function (response) {
+  // ... do something
 
   return response;
 });
 
-// @request function for api call.
-export const request = async (config) => {
+export const request = async (
+  config
+) => {
   try {
     if (!config.headers) {
       config.headers = {};
@@ -25,11 +29,11 @@ export const request = async (config) => {
     if (!config.headers["Content-Type"]) {
       config.headers["Content-Type"] = "application/json";
     }
-    config.headers["Authorization"] = `Bearer ${tokens.accessToken()}`;
-    config.headers["x-refresh"] = `Bearer ${tokens.refreshToken()}`;
-
+    const accessToken = localStorage.getAccessToken();
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
     const response = await axiosInstance.request({ ...config });
-
     return {
       remote: "success",
       data: response.data,
@@ -37,23 +41,26 @@ export const request = async (config) => {
   } catch (error) {
     if (error) {
       if (error.response) {
-        if (error.response && error.response.data) {
-          let errorMessage = error.response.data.erros;
-
-          if (error.response.status === 500) {
-            errorMessage = "Internal Server Error!";
+        const axiosError = error
+        if (axiosError.response && axiosError.response.data) {
+          let errorMessage = axiosError.response.data.errors;
+          // check for 500 to handle message defined by the app
+          if (axiosError.response.status === 500) {
+            errorMessage = "Internal Server Error";
+          } else {
+            errorMessage = error.response.data.errors;
           }
-
           return {
             remote: "failure",
             error: {
-              status: error.response.status,
+              status: axiosError.response.status,
               errors: errorMessage,
             },
           };
         }
       } else {
-        let errorMessage = error.message;
+        const axiosError = error
+        let errorMessage = axiosError.message;
 
         return {
           remote: "failure",
@@ -67,11 +74,10 @@ export const request = async (config) => {
   }
 };
 
-// @parseResponse
-// @desc parse Response data
-export const parseResponse = (response) => {
+export const parseResponse = (
+  response
+) => {
   const data = JSON.parse(response);
-
   if (data && (data.errors || data.error)) {
     return {
       remote: "failure",
