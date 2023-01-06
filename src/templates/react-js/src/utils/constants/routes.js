@@ -1,6 +1,6 @@
-import AuthenticatedRouteExample from "../../pages/example/authenticatedRouteExample";
-import PublicRouteExample from "../../pages/example/publicRouteExample";
-import UnauthenticatedRouteExample from "../../pages/example/unauthenticatedRouteExample";
+import AuthenticatedRouteExample from "../../pages/authenticatedRouteExample";
+import PublicRouteExample from "../../pages/publicRouteExample";
+import UnauthenticatedRouteExample from "../../pages/unauthenticatedRouteExample";
 
 export const PUBLIC_ROUTE = [
   {
