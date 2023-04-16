@@ -1,4 +1,4 @@
-export const localStorage = {
+export const globalLocalStorage = {
   setAccessToken: (accessToken) => {
     localStorage.setItem("x-access", accessToken);
   },
@@ -6,4 +6,4 @@ export const localStorage = {
     localStorage.removeItem("x-access");
   },
   getAccessToken: () => localStorage.getItem("x-access"),
-}
+};

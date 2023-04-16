@@ -1,8 +1,7 @@
 import axios from "axios";
 import QueryString from "qs";
 import { SERVER_URL } from "../utils/serverUrl";
-import { localStorage } from "../utils/localStorage";
-
+import { globalLocalStorage } from "../utils/localStorage";
 
 export const axiosInstance = axios.create({
   baseURL: `${SERVER_URL}/api`,
@@ -19,9 +18,7 @@ axiosInstance.interceptors.response.use(function (response) {
   return response;
 });
 
-export const request = async (
-  config
-) => {
+export const request = async (config) => {
   try {
     if (!config.headers) {
       config.headers = {};
@@ -29,7 +26,7 @@ export const request = async (
     if (!config.headers["Content-Type"]) {
       config.headers["Content-Type"] = "application/json";
     }
-    const accessToken = localStorage.getAccessToken();
+    const accessToken = globalLocalStorage.getAccessToken();
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
@@ -41,7 +38,7 @@ export const request = async (
   } catch (error) {
     if (error) {
       if (error.response) {
-        const axiosError = error
+        const axiosError = error;
         if (axiosError.response && axiosError.response.data) {
           let errorMessage = axiosError.response.data.errors;
           // check for 500 to handle message defined by the app
@@ -59,7 +56,7 @@ export const request = async (
           };
         }
       } else {
-        const axiosError = error
+        const axiosError = error;
         let errorMessage = axiosError.message;
 
         return {
@@ -74,9 +71,7 @@ export const request = async (
   }
 };
 
-export const parseResponse = (
-  response
-) => {
+export const parseResponse = (response) => {
   const data = JSON.parse(response);
   if (data && (data.errors || data.error)) {
     return {
