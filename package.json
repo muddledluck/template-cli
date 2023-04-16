@@ -24,6 +24,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ljlm0402/typescript-express-starter.git"
+    "url": "git+https://github.com/muddledluck/template-cli"
   },
 }
